@@ -2,13 +2,20 @@
 # post-receive
 
 
+THIS_FILE = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+THIS_DIR = File.dirname(THIS_FILE)
+
+require "#{THIS_DIR}/helper"
+
+
 # This will become the Gitokufile
 PROJECT_NAME = "gauntlet"
 BASE_DIR = "/var/git/"
 REPO_DIR = "#{BASE_DIR}#{PROJECT_NAME}.git"
 WORK_DIR = "#{BASE_DIR}#{PROJECT_NAME}.deploy"
 
-# EOF
+# EOF (Gitokufile)
+
 RESTART = false
 
 # 1. Read STDIN (Format: "from_commit to_commit branch_name")
