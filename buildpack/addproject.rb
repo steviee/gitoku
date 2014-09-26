@@ -5,7 +5,7 @@ BASE_DIR = "/var/git/"
 
 HOSTNAME = `hostname -f`
 
-if Dir.exist?("#{BASE_DIR}${PROJECT_NAME}.git")
+if Dir["#{BASE_DIR}${PROJECT_NAME}.git"] != nil
   throw "Project already exists. Abort."
 end
 
