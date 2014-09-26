@@ -1,0 +1,14 @@
+#### begin rbenv configuration ####
+## Remove these lines if you wish to use your own
+## clone of rbenv (with your own rubies)
+
+export RBENV_ROOT=/usr/local/rbenv
+export PATH="$RBENV_ROOT/bin:$PATH"
+eval "$(rbenv init -)"
+
+# Allow local Gem management
+export GEM_HOME="$HOME/.gem"
+export GEM_PATH="$HOME/.gem"
+export PATH="$HOME/.gem/bin:$PATH"
+#### end rbenv configuration ####
+
