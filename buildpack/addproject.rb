@@ -1,12 +1,16 @@
 #!/usr/bin/env ruby
+require "yaml"
 
 THIS_FILE = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
 THIS_DIR = File.expand_path(File.dirname(THIS_FILE))
 
-PROJECT_NAME = ARGV[0]
-BASE_DIR = "~/repos/"
+config = YAML.load_file("#{THIS_DIR}/config.yml")
 
-HOSTNAME = `hostname`
+require "#{THIS_DIR}/helper"
+
+PROJECT_NAME = ARGV[0]
+HOSTNAME = get_host_name
+BASE_DIR = config['base_dir']
 SCRIPT_DIR = THIS_DIR
 
 puts "Trying to create project #{PROJECT_NAME} on #{HOSTNAME}"
@@ -18,6 +22,7 @@ end
 
 `git init --bare #{BASE_DIR}#{PROJECT_NAME}.git`
 `ln -s #{SCRIPT_DIR}/post-receive.rb #{BASE_DIR}#{PROJECT_NAME}.git/hooks/post-receive`
+`chmod +x #{BASE_DIR}#{PROJECT_NAME}.git/hooks/post-receive`
 
 puts "Project created."
 puts ""
