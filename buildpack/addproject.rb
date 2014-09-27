@@ -1,17 +1,23 @@
 #!/usr/bin/env ruby
 
-PROJECT_NAME = $1
-BASE_DIR = "/var/git/"
+THIS_FILE = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+THIS_DIR = File.expand_path(File.dirname(THIS_FILE))
 
-HOSTNAME = `hostname -f`
+PROJECT_NAME = ARGV[0]
+BASE_DIR = "~/repos/"
 
-if Dir["#{BASE_DIR}#{PROJECT_NAME}.git"] != nil
+HOSTNAME = `hostname`
+SCRIPT_DIR = THIS_DIR
+
+puts "Trying to create project #{PROJECT_NAME} on #{HOSTNAME}"
+
+if File.directory?("#{BASE_DIR}#{PROJECT_NAME}.git") 
   puts "Project already exists."
   exit!
 end
 
 `git init --bare #{BASE_DIR}#{PROJECT_NAME}.git`
-`ln -s /var/git/gitoku/buildpack/post-receive.rb #{BASE_DIR}#{PROJECT_NAME}.git/hooks/post-receive`
+`ln -s #{SCRIPT_DIR}/post-receive.rb #{BASE_DIR}#{PROJECT_NAME}.git/hooks/post-receive`
 
 puts "Project created."
 puts ""

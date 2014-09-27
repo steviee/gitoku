@@ -9,7 +9,7 @@ require "#{THIS_DIR}/helper"
 
 
 # This will become the Gitokufile
-PROJECT_NAME = "gauntlet"
+PROJECT_NAME = get_project_name
 BASE_DIR = "/var/git/"
 REPO_DIR = "#{BASE_DIR}#{PROJECT_NAME}.git"
 WORK_DIR = "#{BASE_DIR}#{PROJECT_NAME}.deploy"
