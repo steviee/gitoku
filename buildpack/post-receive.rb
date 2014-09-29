@@ -15,15 +15,14 @@ PROJECT_NAME = get_project_name(__FILE__)
 SERVER = "webbrick"
 
 # EOF (Gitokufile)
-BASE_DIR = config['base_dir']
+BASE_DIR = File.expand_path(config['base_dir'])
 
 puts "BASE_DIR = #{BASE_DIR}"
-REPO_DIR = "#{BASE_DIR}#{PROJECT_NAME}.git"
-WORK_DIR = "#{BASE_DIR}#{PROJECT_NAME}.deploy"
-
+REPO_DIR = "#{BASE_DIR}/#{PROJECT_NAME}.git"
+WORK_DIR = "#{BASE_DIR}/#{PROJECT_NAME}.deploy"
 
 # try to figure out if server needs restarting
-RESTART = false
+do_restart = false
 
 # 1. Read STDIN (Format: "from_commit to_commit branch_name")
 from, to, branch = ARGF.read.split " "
@@ -39,14 +38,15 @@ if (branch =~ /master$/) == nil
 end
 
 # 3. Copy files to deploy directory
-if File.exists?(WORK_DIR) && File.directory?(WORK_DIR)
+if Dir.exists?(WORK_DIR) && File.directory?(WORK_DIR)
   puts "Updating working directory."
-  `GIT_WORK_TREE="#{WORK_DIR}" git checkout -f master`
+  Dir.chdir "#{WORK_DIR}"
+  system 'git checkout -f master'
   puts "DEPLOY: master(#{to}) updated in '#{WORK_DIR}'"
-  RESTART = true
+  do_restart = true
 else
   puts "Cloning into new working directory."
-  `git clone #{REPO_DIR} #{WORK_DIR}`
+  system 'git clone #{REPO_DIR} #{WORK_DIR}'
   puts "DEPLOY: master(#{to}) copied to '#{WORK_DIR}'"
 end
 
@@ -54,34 +54,40 @@ end
 gitoku = YAML.load_file("#{WORK_DIR}/Gitokufile")
 
 # Stop the server
-if gitoku['server'] == "WEBrick" && RESTART
-	`kill -INT $(#{WORK_DIR}/tmp/pids/server.pid)`
+if gitoku['server'] == "WEBrick" && do_restart
+	puts "Shutting down WEBrick."
+	system "kill -INT $(cat #{WORK_DIR}/tmp/pids/server.pid)"
 end
 
-if gitoku['run_bundler'] == true 
-	chdir "#{WORK_DIR}"
-	`bundle install`
+if gitoku['run_bundler'] == true
+	puts "Running: bundle install" 
+	Dir.chdir "#{WORK_DIR}"
+	system 'bundle install'
 end
 
-if gitoku['run_migrations'] == true 
-	chdir "#{WORK_DIR}"
-	`rake db:migrate`
+if gitoku['run_migrations'] == true
+	puts "Running: rake db:migrate" 
+	Dir.chdir "#{WORK_DIR}"
+	system 'rake db:migrate'
 end
 
 if gitoku['clean_assets'] == true 
-	chdir "#{WORK_DIR}"
-	`rake assets:clean`
+	puts "Running: rake assets:clean"
+	Dir.chdir "#{WORK_DIR}"
+	system 'rake assets:clean'
 end
 
 if gitoku['precompile_assets'] == true 
-	chdir "#{WORK_DIR}"
-	`rake assets:precompile`
+	puts "Running: rake assets:precompile"
+	Dir.chdir "#{WORK_DIR}"
+	system 'rake assets:precompile'
 end
 
 # (re)start the server
 if gitoku['server'] == "WEBrick"
-	chdir "#{WORK_DIR}"
-	`rails s -p #{gitoku['port']} -d`
+	puts "Starting WEBrick on port #{gitoku['port']}"
+	Dir.chdir "#{WORK_DIR}"
+	system "rails s -p #{gitoku['port']} -d"
 end
 
 puts "DONE. Have a nice day!"
