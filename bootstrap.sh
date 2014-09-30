@@ -47,6 +47,7 @@ rbenv global 2.1.2
 
 echo "Checking ruby version for user git."
 su -lc "ruby -v" git
+su -lc "gem install ghost" git 
 
 su -lc "mkdir ${PROJECT}.git" git
 su -lc "git init --bare ${PROJECT}.git" git
