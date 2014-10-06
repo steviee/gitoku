@@ -1,0 +1,6 @@
+server: "WEBrick"
+port: 3001
+run_bundler: true
+run_migrations: true
+clean_assets: false
+precompile_assets: false
