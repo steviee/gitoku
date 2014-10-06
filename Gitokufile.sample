@@ -1,6 +1,17 @@
+# Select the server running your app.
+# Possible values are: WEBrick, PhusionPassenger
 server: "WEBrick"
+# Configure the interface
+interface: 0.0.0.0
+# Select the port
 port: 3001
+# Environment (equals RAILS_ENV)
+environment: staging
+# Shall I run bundler to update the packages?
 run_bundler: true
+# Shall I run the database migrations (you should run these seperately)
 run_migrations: true
+# I can clean old assets for you, shall I?
 clean_assets: false
+# And I can also recompile the assets
 precompile_assets: false

@@ -6,6 +6,7 @@ PROJECT = "testpack"
 echo "Updating System"
 apt-get -qq update
 apt-get -qq install -y libssl-dev build-essential libsqlite3-dev git curl libpq-dev libmysqlclient-dev
+apt-get -qq install -y nginx
 
 if [ -s "/vagrant/initial-profile" ] ; then
 	# add to root's profile

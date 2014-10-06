@@ -32,22 +32,22 @@ puts "#{PROJECT_NAME} is deploying! Say hi!"
 puts "====================================="
 
 # 2. Only deploy if master branch was pushed
-if (branch =~ /master$/) == nil
-  puts "Received branch #{branch}, not deploying."
-  exit
-end
+#if (branch =~ /master$/) == nil
+#  puts "Received branch #{branch}, not deploying."
+#  exit
+#end
 
 # 3. Copy files to deploy directory
 if Dir.exists?(WORK_DIR) && File.directory?(WORK_DIR)
   puts "Updating working directory."
   Dir.chdir "#{WORK_DIR}"
   system 'git checkout -f master'
-  puts "DEPLOY: master(#{to}) updated in '#{WORK_DIR}'"
+  puts "DEPLOY: #{branch}(#{to}) updated in '#{WORK_DIR}'"
   do_restart = true
 else
   puts "Cloning into new working directory."
   system 'git clone #{REPO_DIR} #{WORK_DIR}'
-  puts "DEPLOY: master(#{to}) copied to '#{WORK_DIR}'"
+  puts "DEPLOY: #{branch}(#{to}) copied to '#{WORK_DIR}'"
 end
 
 # 4. Read Gitokufile
@@ -87,7 +87,13 @@ end
 if gitoku['server'] == "WEBrick"
 	puts "Starting WEBrick on port #{gitoku['port']}"
 	Dir.chdir "#{WORK_DIR}"
-	system "rails s -p #{gitoku['port']} -d"
+  system "RAILS_ENV=#{gitoku['environment']} rails s -b #{gitoku['interface']} -p #{gitoku['port']} -d"
+end
+
+if gitoku['server'] == "PhusionPassenger"
+  puts "Starting PhusionPassenger on port #{gitoku['port']}"
+  Dir.chdir "#{WORK_DIR}"
+  system "RAILS_ENV=#{gitoku['environment']} rails s -b #{gitoku['interface']} -p #{gitoku['port']} -d"
 end
 
 puts "DONE. Have a nice day!"
