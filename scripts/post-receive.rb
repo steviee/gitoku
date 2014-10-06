@@ -16,10 +16,13 @@ SERVER = "webbrick"
 
 # EOF (Gitokufile)
 BASE_DIR = File.expand_path(config['base_dir'])
-
 puts "BASE_DIR = #{BASE_DIR}"
+
 REPO_DIR = "#{BASE_DIR}/#{PROJECT_NAME}.git"
+puts "REPO_DIR = #{REPO_DIR}"
+
 WORK_DIR = "#{BASE_DIR}/#{PROJECT_NAME}.deploy"
+puts "WORK_DIR = #{WORK_DIR}"
 
 # try to figure out if server needs restarting
 do_restart = false
@@ -36,8 +39,6 @@ puts "====================================="
 #  puts "Received branch #{branch}, not deploying."
 #  exit
 #end
-
-puts "WORK_DIR = #{WORK_DIR}"
 
 # 3. Copy files to deploy directory
 if Dir.exists?(WORK_DIR) && File.directory?(WORK_DIR)
