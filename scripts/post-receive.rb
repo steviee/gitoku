@@ -44,12 +44,14 @@ puts "====================================="
 if Dir.exists?(WORK_DIR) && File.directory?(WORK_DIR)
   puts "Updating working directory."
   Dir.chdir "#{WORK_DIR}"
-  system 'git checkout -f master'
+  system 'git checkout -f orderlist'
   puts "DEPLOY: #{branch}(#{to}) updated in '#{WORK_DIR}'"
   do_restart = true
 else
   puts "Cloning into new working directory #{WORK_DIR}."
   system 'git clone #{REPO_DIR} #{WORK_DIR}'
+  Dir.chdir "#{WORK_DIR}"
+  system 'git checkout -f orderlist'
   puts "DEPLOY: #{branch}(#{to}) copied to '#{WORK_DIR}'"
 end
 
