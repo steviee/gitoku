@@ -37,6 +37,8 @@ puts "====================================="
 #  exit
 #end
 
+puts "WORK_DIR = #{WORK_DIR}"
+
 # 3. Copy files to deploy directory
 if Dir.exists?(WORK_DIR) && File.directory?(WORK_DIR)
   puts "Updating working directory."
@@ -45,7 +47,7 @@ if Dir.exists?(WORK_DIR) && File.directory?(WORK_DIR)
   puts "DEPLOY: #{branch}(#{to}) updated in '#{WORK_DIR}'"
   do_restart = true
 else
-  puts "Cloning into new working directory."
+  puts "Cloning into new working directory #{WORK_DIR}."
   system 'git clone #{REPO_DIR} #{WORK_DIR}'
   puts "DEPLOY: #{branch}(#{to}) copied to '#{WORK_DIR}'"
 end
@@ -53,7 +55,10 @@ end
 # 4. Read Gitokufile
 gitoku = YAML.load_file("#{WORK_DIR}/Gitokufile")
 
+# =============================================================================================
 # Stop the server
+# =============================================================================================
+
 if gitoku['server'] == "WEBrick" && do_restart
 	puts "Shutting down WEBrick."
 	system "kill -INT $(cat #{WORK_DIR}/tmp/pids/server.pid)"
@@ -64,6 +69,10 @@ if gitoku['server'] == "PhusionPassenger" && do_restart
   Dir.chdir "#{WORK_DIR}"
   system "./stop-staging.sh"
 end
+
+# =============================================================================================
+# Run the tasks
+# =============================================================================================
 
 
 if gitoku['run_bundler'] == true
@@ -90,7 +99,10 @@ if gitoku['precompile_assets'] == true
 	system 'rake assets:precompile'
 end
 
-# (re)start the server
+# =============================================================================================
+# (Re)start the server
+# =============================================================================================
+
 if gitoku['server'] == "WEBrick"
 	puts "Starting WEBrick on port #{gitoku['port']}"
 	Dir.chdir "#{WORK_DIR}"
