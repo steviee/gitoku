@@ -59,6 +59,13 @@ if gitoku['server'] == "WEBrick" && do_restart
 	system "kill -INT $(cat #{WORK_DIR}/tmp/pids/server.pid)"
 end
 
+if gitoku['server'] == "PhusionPassenger" && do_restart
+  puts "Stopping PhusionPassenger on port #{gitoku['port']}"
+  Dir.chdir "#{WORK_DIR}"
+  system "./stop-staging.sh"
+end
+
+
 if gitoku['run_bundler'] == true
 	puts "Running: bundle install" 
 	Dir.chdir "#{WORK_DIR}"
@@ -93,7 +100,7 @@ end
 if gitoku['server'] == "PhusionPassenger"
   puts "Starting PhusionPassenger on port #{gitoku['port']}"
   Dir.chdir "#{WORK_DIR}"
-  system "RAILS_ENV=#{gitoku['environment']} rails s -b #{gitoku['interface']} -p #{gitoku['port']} -d"
+  system "./start-staging.sh"
 end
 
 puts "DONE. Have a nice day!"
